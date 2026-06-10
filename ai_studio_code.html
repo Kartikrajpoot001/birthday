@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anu: My Favorite Story ❤️</title>
+    
+    <!-- Premium Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@200;400;600&family=Dancing+Script:wght@600;700&family=Parisienne&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #800f2f;
+            --accent: #ffb3c1;
+            --gold: #d4af37;
+            --bg: #050505;
+            --glass: rgba(255, 255, 255, 0.07);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 700; }
+        .cursive { font-family: 'Dancing Script', cursive; color: var(--accent); }
+        .signature { font-family: 'Parisienne', cursive; color: var(--gold); }
+
+        /* --- PRELOADER --- */
+        #loader {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .heart-beat {
+            width: 80px; height: 80px; background: var(--primary);
+            position: relative; transform: rotate(45deg);
+            animation: beat 1.2s infinite;
+        }
+        .heart-beat::before, .heart-beat::after {
+            content: ''; width: 80px; height: 80px; background: var(--primary);
+            border-radius: 50%; position: absolute;
+        }
+        .heart-beat::before { left: -40px; }
+        .heart-beat::after { top: -40px; }
+        @keyframes beat { 0%, 100% { transform: rotate(45deg) scale(0.8); } 50% { transform: rotate(45deg) scale(1.1); } }
+
+        /* --- BACKGROUND CANVAS --- */
+        #canvas-bg { position: fixed; top: 0; left: 0; z-index: -1; }
+
+        /* --- MUSIC CONTROL --- */
+        .music-btn {
+            position: fixed; top: 30px; right: 30px; z-index: 1000;
+            background: var(--glass); backdrop-filter: blur(15px);
+            border: 1px solid var(--accent); padding: 15px; border-radius: 50%;
+            cursor: pointer; transition: 0.3s;
+        }
+        .music-btn:hover { background: var(--primary); transform: scale(1.1); box-shadow: 0 0 20px var(--primary); }
+
+        /* --- GLOBAL LAYOUT --- */
+        section {
+            min-height: 100vh; padding: 100px 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; transform: translateY(80px); transition: 1.2s all ease-out;
+            max-width: 1200px; margin: 0 auto;
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        .glass-panel {
+            background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 30px;
+            padding: 60px; width: 100%; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .btn-glow {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            padding: 18px 45px; border-radius: 50px; color: white;
+            text-decoration: none; font-weight: 600; letter-spacing: 2px;
+            transition: 0.5s; border: none; cursor: pointer; display: inline-block;
+            margin-top: 40px; text-transform: uppercase; font-size: 0.9rem;
+        }
+        .btn-glow:hover { transform: scale(1.1); box-shadow: 0 0 40px var(--primary); }
+
+        /* --- TIMELINE --- */
+        .timeline-container { position: relative; width: 100%; padding: 40px 0; }
+        .timeline-line { position: absolute; left: 50%; width: 2px; height: 100%; background: var(--primary); transform: translateX(-50%); }
+        .timeline-item { width: 45%; margin-bottom: 50px; position: relative; }
+        .timeline-item.left { margin-right: 55%; text-align: right; }
+        .timeline-item.right { margin-left: 55%; text-align: left; }
+        .timeline-item::after {
+            content: '❤'; position: absolute; right: -35px; top: 0; background: var(--bg); color: var(--primary);
+            width: 20px; height: 20px; text-align: center; font-size: 14px;
+        }
+        .timeline-item.right::after { left: -35px; }
+
+        /* --- CARDS GRID --- */
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; width: 100%; margin-top: 40px;
+        }
+        .item-card {
+            background: var(--glass); padding: 30px; border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05); transition: 0.4s;
+            text-align: center;
+        }
+        .item-card:hover { background: var(--primary); transform: translateY(-10px); }
+        .item-card i { font-size: 2rem; color: var(--gold); display: block; margin-bottom: 15px; }
+
+        /* --- ENVELOPES --- */
+        .env-box { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 40px; }
+        .envelope {
+            width: 220px; height: 140px; background: #fff9f0; color: #2c3e50;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 8px; cursor: pointer; transition: 0.5s;
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.4); border: 2px solid #eee;
+        }
+        .envelope:hover { transform: translateY(-15px) rotate(5deg); background: var(--accent); }
+
+        /* --- SPECIAL MOMENTS BLOCKS --- */
+        .moment-block {
+            display: flex; align-items: center; gap: 40px; margin-bottom: 80px; width: 100%;
+        }
+        .moment-block:nth-child(even) { flex-direction: row-reverse; }
+        .moment-text { flex: 1; padding: 30px; text-align: left; background: var(--glass); border-radius: 20px; }
+        .moment-icon { 
+            font-size: 5rem; width: 150px; height: 150px; background: var(--primary); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        /* --- LETTER --- */
+        .letter-wrap {
+            background: #fff; color: #333; padding: 80px; max-width: 800px;
+            border-radius: 2px; font-family: 'Dancing Script', cursive; font-size: 1.8rem;
+            box-shadow: 20px 20px 0px var(--primary); line-height: 1.5; position: relative;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .timeline-line { left: 20px; }
+            .timeline-item { width: 90%; margin-left: 40px !important; text-align: left !important; }
+            .timeline-item::after { left: -28px !important; }
+            .moment-block { flex-direction: column !important; }
+            .glass-panel { padding: 30px 15px; }
+            .letter-wrap { padding: 40px 20px; font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="heart-beat"></div>
+        <p class="cursive" style="margin-top: 60px; font-size: 1.8rem;">Writing Kartik's Heart Out...</p>
+    </div>
+
+    <!-- Background -->
+    <canvas id="canvas-bg"></canvas>
+
+    <!-- Music Button -->
+    <div class="music-btn" onclick="toggleMusic()">
+        <span id="music-icon" style="font-size: 24px;">🎵</span>
+        <audio id="bg-music" loop>
+            <source src="https://www.chosic.com/wp-content/uploads/2021/04/And-So-It-Begins-Inspired-By-Crush-Music.mp3" type="audio/mp3">
+        </audio>
+    </div>
+
+    <!-- PAGE 1: MAGICAL WELCOME -->
+    <section id="welcome" class="visible">
+        <h2 class="cursive" style="font-size: 2.5rem; letter-spacing: 5px;">My Dearest</h2>
+        <h1 style="font-size: clamp(3.5rem, 12vw, 8rem); line-height: 1; margin: 20px 0;">Happy Birthday<br><span class="cursive" style="color: var(--primary);">Anu</span></h1>
+        <p style="letter-spacing: 4px; opacity: 0.8; text-transform: uppercase; font-size: 0.8rem;">Every second with you is a cinematic dream</p>
+        <a href="#intro" class="btn-glow">Start Our Journey</a>
+    </section>
+
+    <!-- PAGE 2: THE GIRL WHO CHANGED MY LIFE -->
+    <section id="intro">
+        <div class="glass-panel">
+            <h2 class="cursive" style="font-size: 3.5rem; margin-bottom: 20px;">The Girl Who Changed My Life</h2>
+            <p style="font-size: 1.4rem; line-height: 1.8; font-weight: 300;">
+                Anu, before I met you, life was like a movie without a soundtrack. You walked in with your chaotic energy, your beautiful smile, and that heart of gold, and suddenly everything was in Technicolor. You didn't just enter my life; you became the very reason I want to live it to the fullest.
+            </p>
+            <div style="margin-top: 30px; border-top: 1px solid var(--accent); padding-top: 20px;">
+                <p class="cursive" style="font-size: 2rem;">"You are my peace in a world of noise."</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE 3: LOVE STORY TIMELINE -->
+    <section id="timeline-sec">
+        <h2 style="font-size: 3.5rem; margin-bottom: 60px;">Our Infinite Timeline</h2>
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+            <div class="timeline-item left"><h3>1. First Meeting</h3><p>The day the stars aligned. I still remember the first look.</p></div>
+            <div class="timeline-item right"><h3>2. Becoming Friends</h3><p>Laughing at jokes that only we understood. The start of 'us'.</p></div>
+            <div class="timeline-item left"><h3>3. Studying Together</h3><p>Pretending to focus on books while my mind was only on you.</p></div>
+            <div class="timeline-item right"><h3>4. Library Memories</h3><p>Stolen glances between the aisles. The quietest but loudest love.</p></div>
+            <div class="timeline-item left"><h3>5. Classroom Memories</h3><p>Passing notes and shared smiles during boring lectures.</p></div>
+            <div class="timeline-item right"><h3>6. Practical Class</h3><p>Chemistry wasn't just a subject; it was what was happening between us.</p></div>
+            <div class="timeline-item left"><h3>7. Holding Hands</h3><p>The moment our fingers locked, I knew I never wanted to let go.</p></div>
+            <div class="timeline-item right"><h3>8. Railway Station Goodbye</h3><p>The hardest hugs. Seeing you go is the only thing I hate.</p></div>
+            <div class="timeline-item left"><h3>9. Missing Each Other</h3><p>Counting days, hours, and minutes until we were back together.</p></div>
+            <div class="timeline-item right"><h3>10. Growing Together</h3><p>Building a future, brick by brick, laugh by laugh.</p></div>
+            <div class="timeline-item left"><h3>11. Today</h3><p>Celebrating the girl who is my entire world. Happy Birthday!</p></div>
+        </div>
+    </section>
+
+    <!-- PAGE 5: 20 THINGS I LOVE ABOUT YOU (Personality Specific) -->
+    <section id="reasons">
+        <h2 style="font-size: 3rem; margin-bottom: 20px;">20 Reasons You Are My Everything</h2>
+        <p class="cursive" style="font-size: 1.5rem; margin-bottom: 40px;">Especially that beautiful soul of yours...</p>
+        <div class="grid-container">
+            <div class="item-card"><h3>1. Your Childish Behavior</h3><p>How you get excited over small things like a little kid. It's my favorite thing.</p></div>
+            <div class="item-card"><h3>2. Your Smile</h3><p>The way it lights up even the darkest of my days.</p></div>
+            <div class="item-card"><h3>3. Your Innocence</h3><p>The pure way you look at the world. Never change.</p></div>
+            <div class="item-card"><h3>4. Your Pouts</h3><p>The way you make that face when you're annoyed. Too cute to handle!</p></div>
+            <div class="item-card"><h3>5. Your Intelligence</h3><p>The way you solve problems and handle life with grace.</p></div>
+            <div class="item-card"><h3>6. Your Kindness</h3><p>How you care for everyone around you so deeply.</p></div>
+            <div class="item-card"><h3>7. Your Support</h3><p>You are the pillar that keeps me standing.</p></div>
+            <div class="item-card"><h3>8. Your Laugh</h3><p>The most beautiful melody I have ever heard.</p></div>
+            <div class="item-card"><h3>9. Your Anger</h3><p>Even when you're mad at me, you look like an angel.</p></div>
+            <div class="item-card"><h3>10. Your Sleepy Voice</h3><p>The cutest sound in the world when you wake up.</p></div>
+            <div class="item-card"><h3>11. Your Eyes</h3><p>I could get lost in them for a thousand years.</p></div>
+            <div class="item-card"><h3>12. Your Courage</h3><p>The way you face your fears every single day.</p></div>
+            <div class="item-card"><h3>13. Your Ambition</h3><p>Watching you work for your dreams makes me so proud.</p></div>
+            <div class="item-card"><h3>14. Your Honesty</h3><p>How you always stay true to yourself and to me.</p></div>
+            <div class="item-card"><h3>15. Our Late Talks</h3><p>The way we can talk for hours about nothing and everything.</p></div>
+            <div class="item-card"><h3>16. Your Style</h3><p>Everything you wear becomes beautiful because of you.</p></div>
+            <div class="item-card"><h3>17. Your Patience</h3><p>The way you deal with my craziness without complaining.</p></div>
+            <div class="item-card"><h3>18. Your Hugs</h3><p>My safe place. The place where all my stress vanishes.</p></div>
+            <div class="item-card"><h3>19. Your Hair</h3><p>How you play with it when you're thinking. So mesmerizing.</p></div>
+            <div class="item-card"><h3>20. Your Soul</h3><p>Because you are simply the best person I have ever known.</p></div>
+        </div>
+    </section>
+
+    <!-- PAGE 6: OUR SPECIAL MOMENTS -->
+    <section id="moments">
+        <h2 style="font-size: 3.5rem; margin-bottom: 60px;">Our Cinematic Moments</h2>
+        
+        <div class="moment-block">
+            <div class="moment-icon">📚</div>
+            <div class="moment-text">
+                <h3>Studying Together</h3>
+                <p>Those long hours with books open. We pretended to study, but the real lesson was learning about each other. Every page turned was a step closer to us.</p>
+            </div>
+        </div>
+
+        <div class="moment-block">
+            <div class="moment-icon">📖</div>
+            <div class="moment-text">
+                <h3>Library Dates</h3>
+                <p>The silence of the library was where our hearts spoke the loudest. Stolen glances behind shelves and the comfort of just being near you in the quiet.</p>
+            </div>
+        </div>
+
+        <div class="moment-block">
+            <div class="moment-icon">🤝</div>
+            <div class="moment-text">
+                <h3>Holding Hands</h3>
+                <p>The first time my hand found yours, it felt like home. A simple touch that says "I'm here, I've got you, and I'm never letting go."</p>
+            </div>
+        </div>
+
+        <div class="moment-block">
+            <div class="moment-icon">🚉</div>
+            <div class="moment-text">
+                <h3>Railway Station Hug</h3>
+                <p>The bitter-sweet scent of the station. The hug that tried to stop time. Seeing you leave is hard, but it makes the 'Hello' so much more special.</p>
+            </div>
+        </div>
+
+        <div class="moment-block">
+            <div class="moment-icon">🌙</div>
+            <div class="moment-text">
+                <h3>Dreaming Our Future</h3>
+                <p>Talking about where we'll go, what we'll do, and the life we'll build. Every dream I have starts and ends with you, Anu.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE 7: OPEN WHEN -->
+    <section id="open-when">
+        <h2 style="font-size: 3.5rem; margin-bottom: 40px;">Open When...</h2>
+        <div class="env-box">
+            <div class="envelope" onclick="showMsg('Anu, my love, don\'t be sad. Close your eyes and feel my hug. I am always right here, holding your hand. Everything will be okay.')"><span>💌</span><p>You're Sad</p></div>
+            <div class="envelope" onclick="showMsg('I miss you more! Every second without you feels like a year. I am counting the days until our next hug. I love you!')"><span>💌</span><p>You Miss Me</p></div>
+            <div class="envelope" onclick="showMsg('You are the smartest, most capable woman I know. You can handle anything. I believe in you more than anyone else!')"><span>💌</span><p>You Doubt Yourself</p></div>
+            <div class="envelope" onclick="showMsg('Look at how far you have come! You are a warrior. Keep going for your dreams, my Queen. I am so proud of you.')"><span>💌</span><p>Need Motivation</p></div>
+            <div class="envelope" onclick="showMsg('Close your eyes. I am right there with you in spirit. You are never, ever alone as long as I am alive.')"><span>💌</span><p>Feel Lonely</p></div>
+        </div>
+    </section>
+
+    <!-- PAGE 11: LOVE LETTER -->
+    <section id="letter-sec">
+        <div class="letter-wrap">
+            <p>My Dearest Anu,</p><br>
+            <p>They say words are not enough to describe true love, and as I write this, I realize how true that is. How do I put into words the way my heart skips a beat when you laugh? Or the way your childish excitement over a small thing makes me want to protect your happiness forever?</p><br>
+            <p>You are my best friend, my study partner, my secret-keeper, and my home. Thank you for choosing me every day. Thank you for being the beautiful, innocent, and wonderful soul that you are.</p><br>
+            <p>On your birthday, I promise to always be the person who holds your hand, especially when things get tough. I love you more than all the stars in the sky.</p><br>
+            <p>Forever Yours,<br><span class="signature">Kartik</span></p>
+        </div>
+    </section>
+
+    <!-- PAGE 12: FINAL SURPRISE -->
+    <section id="final">
+        <h3 class="cursive" style="font-size: 2.5rem; margin-bottom: 20px;">You are my favorite chapter,</h3>
+        <h3 class="cursive" style="font-size: 2.5rem; margin-bottom: 40px;">my favorite memory, and my favorite person.</h3>
+        <h1 style="font-size: 5rem; color: var(--primary); text-shadow: 0 0 20px var(--primary);">I Love You Forever</h1>
+        <h2 class="cursive" style="font-size: 3.5rem; margin-top: 20px;">Happy Birthday, Anu ❤️</h2>
+        <button class="btn-glow" onclick="launchConfetti()">CELEBRATE OUR LOVE! 🎉</button>
+    </section>
+
+    <!-- Particles and Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        // 1. Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const l = document.getElementById('loader');
+                l.style.opacity = '0';
+                setTimeout(() => l.style.display = 'none', 1000);
+            }, 2500);
+        });
+
+        // 2. Background Animation (Floating Hearts & Stars)
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speed = Math.random() * 0.5 + 0.2;
+                this.opacity = Math.random() * 0.5 + 0.1;
+                this.color = Math.random() > 0.5 ? '#ff4d6d' : '#fff';
+            }
+            update() {
+                this.y -= this.speed;
+                if (this.y < 0) this.reset();
+            }
+            draw() {
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 150; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 3. Scroll Reveal
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('section').forEach(s => obs.observe(s));
+
+        // 4. Music
+        const m = document.getElementById('bg-music');
+        function toggleMusic() {
+            if (m.paused) { m.play(); document.getElementById('music-icon').innerText = '⏸️'; }
+            else { m.pause(); document.getElementById('music-icon').innerText = '🎵'; }
+        }
+
+        // 5. Surprises
+        function showMsg(txt) { alert(txt); }
+        function launchConfetti() {
+            const end = Date.now() + 10 * 1000;
+            const colors = ['#ff4d6d', '#ffffff', '#ffb3c1'];
+            (function frame() {
+                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors });
+                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
